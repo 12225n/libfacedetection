@@ -36,13 +36,16 @@ or tort (including negligence or otherwise) arising in any way out of
 the use of this software, even if advised of the possibility of such damage.
 */
 
-#include <stdio.h>
-#include <opencv2/opencv.hpp>
 #include "facedetectcnn.h"
+
+#include <opencv2/opencv.hpp>
+
+#include <stdio.h>
 
 //define the buffer size. Do not change the size!
 //0x9000 = 1024 * (16 * 2 + 4), detect 1024 face at most
 #define DETECT_BUFFER_SIZE 0x9000
+
 using namespace cv;
 using namespace std;
 
@@ -63,7 +66,6 @@ int main(int argc, char* argv[])
         fprintf(stderr, "Can not alloc buffer.\n");
         return -1;
     }
-
 
     VideoCapture cap;
     Mat im;
@@ -132,17 +134,17 @@ int main(int argc, char* argv[])
                         p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13],p[14]);
 
             }
+            
             imshow("result", result_image);
             
             if((cv::waitKey(2)& 0xFF) == 'q')
+            {
                 break;
+            }
         }
     }
-   
-	
 
-
-    //release the buffer
+    // release the buffer
     free(pBuffer);
 
 	return 0;

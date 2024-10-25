@@ -36,9 +36,7 @@ or tort (including negligence or otherwise) arising in any way out of
 the use of this software, even if advised of the possibility of such damage.
 */
 
-
 #include "facedetectcnn.h"
-
 
 #if 0
 #include <opencv2/opencv.hpp>
@@ -49,7 +47,6 @@ cv::TickMeter cvtm;
 #define TIME_START
 #define TIME_END(FUNCNAME)
 #endif
-
 
 #define NUM_CONV_LAYER 53
 
@@ -131,6 +128,7 @@ std::vector<FaceRect> objectdetect_cnn(unsigned char * rgbImageData, int width, 
     TIME_END("conv5");
 
     CDataBlob<float> pred_reg[3], pred_cls[3], pred_kps[3], pred_obj[3];
+
     /***************branch5*********************/
     TIME_START;
     fb3 = convolutionDP(fb3, g_pFilters[27], g_pFilters[28]);
@@ -197,11 +195,12 @@ std::vector<FaceRect> objectdetect_cnn(unsigned char * rgbImageData, int width, 
     TIME_START;
     std::vector<FaceRect> facesInfo = detection_output(cls, reg, kps, obj, 0.45f, 0.2f, 1000, 512);
     TIME_END("detection output")
+    
     return facesInfo;
 }
 
 int* facedetect_cnn(unsigned char * result_buffer, //buffer memory for storing face detection results, !!its size must be 0x9000 Bytes!!
-    unsigned char * rgb_image_data, int width, int height, int step) //input image, it must be BGR (three-channel) image!
+                        unsigned char * rgb_image_data, int width, int height, int step) //input image, it must be BGR (three-channel) image!
 {
 
     if (!result_buffer)
@@ -209,7 +208,8 @@ int* facedetect_cnn(unsigned char * result_buffer, //buffer memory for storing f
         fprintf(stderr, "%s: null buffer memory.\n", __FUNCTION__);
         return NULL;
     }
-    //clear memory
+
+    // clear memory
     result_buffer[0] = 0;
     result_buffer[1] = 0;
     result_buffer[2] = 0;

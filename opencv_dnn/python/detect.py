@@ -82,6 +82,7 @@ def main():
         target_id=args.target
     )
 
+    # Is Has Input Arg, Will Open The Input Img;
     if args.input is not None:
         image = cv.imread(args.input)
 
@@ -96,7 +97,7 @@ def main():
             cv.namedWindow(args.input, cv.WINDOW_AUTOSIZE)
             cv.imshow(args.input, vis_image)
             cv.waitKey(0)
-    else:
+    else: # If Not Has Input Arg, Will Open Camera;
         device_id = 0
         cap = cv.VideoCapture(device_id)
         frame_w = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))

@@ -434,9 +434,10 @@ bool SortScoreBBoxPairDescend(const std::pair<float, NormalizedBBox>& pair1,   c
     return pair1.first > pair2.first;
 }
 
-
-CDataBlob<float> upsampleX2(const CDataBlob<float>& inputData) {
-    if (inputData.isEmpty()) {
+CDataBlob<float> upsampleX2(const CDataBlob<float>& inputData)
+{
+    if (inputData.isEmpty())
+    {
         std::cerr << __FUNCTION__ << ": The input data is empty." << std::endl;
         exit(1);
     }
@@ -459,11 +460,14 @@ CDataBlob<float> upsampleX2(const CDataBlob<float>& inputData) {
     return outData;
 }
 
-CDataBlob<float> elementAdd(const CDataBlob<float>& inputData1, const CDataBlob<float>& inputData2) {
-    if (inputData1.rows != inputData2.rows || inputData1.cols != inputData2.cols || inputData1.channels != inputData2.channels) {
+CDataBlob<float> elementAdd(const CDataBlob<float>& inputData1, const CDataBlob<float>& inputData2)
+{
+    if (inputData1.rows != inputData2.rows || inputData1.cols != inputData2.cols || inputData1.channels != inputData2.channels)
+    {
         std::cerr << __FUNCTION__ << ": The two input datas must be in the same shape." << std::endl;
         exit(1);
     }
+
     CDataBlob<float> outData(inputData1.rows, inputData1.cols, inputData1.channels);
     for (int r = 0; r < inputData1.rows; r++) {
         for (int c = 0; c < inputData1.cols; c++) {
@@ -521,7 +525,6 @@ CDataBlob<float> convolution4layerUnit(const CDataBlob<float>& inputData,
     CDataBlob<float> out = convolutionDP(tmp, filtersP2, filtersD2, do_relu);
     return out;
 }
-
 
 //only 2X2 S2 is supported
 CDataBlob<float> maxpooling2x2S2(const CDataBlob<float>&inputData)
@@ -619,7 +622,8 @@ CDataBlob<float> maxpooling2x2S2(const CDataBlob<float>&inputData)
     return outputData;
 }
 
-CDataBlob<float> meshgrid(int feature_width, int feature_height, int stride, float offset) {
+CDataBlob<float> meshgrid(int feature_width, int feature_height, int stride, float offset)
+{
     CDataBlob<float> out(feature_height, feature_width, 2);
     for(int r = 0; r < feature_height; ++r) {
         float rx = (float)(r * stride) + offset;
@@ -632,7 +636,8 @@ CDataBlob<float> meshgrid(int feature_width, int feature_height, int stride, flo
     return out;
 }
 
-void bbox_decode(CDataBlob<float>& bbox_pred, const CDataBlob<float>& priors, int stride) {
+void bbox_decode(CDataBlob<float>& bbox_pred, const CDataBlob<float>& priors, int stride)
+{
     if(bbox_pred.cols != priors.cols || bbox_pred.rows != priors.rows) {
         std::cerr << __FUNCTION__ << ": Mismatch between feature map and anchor size. (" \
         << (bbox_pred.rows) << ", " << (bbox_pred.cols) << ") vs (" \
@@ -658,15 +663,20 @@ void bbox_decode(CDataBlob<float>& bbox_pred, const CDataBlob<float>& priors, in
     }
 }
 
-void kps_decode(CDataBlob<float>& kps_pred, const CDataBlob<float>& priors, int stride) {
-    if(kps_pred.cols != priors.cols || kps_pred.rows != priors.rows) {
+void kps_decode(CDataBlob<float>& kps_pred, const CDataBlob<float>& priors, int stride)
+{
+    if(kps_pred.cols != priors.cols || kps_pred.rows != priors.rows)
+    {
         std::cerr << __FUNCTION__ << ": Mismatch between feature map and anchor size." << std::endl;
         exit(1);
     }
-    if(kps_pred.channels & 1) {
+
+    if(kps_pred.channels & 1)
+    {
         std::cerr << __FUNCTION__ << ": The kps dim must be even." << std::endl;
         exit(1);
     }
+
     float fstride = (float)stride;
     int num_points = kps_pred.channels >> 1;
 
@@ -754,9 +764,11 @@ CDataBlob<T> blob2vector(const CDataBlob<T> &inputData)
 
     return outputData;
 }
+
 template CDataBlob<float> blob2vector(const CDataBlob<float>& inputData);
 
-void sigmoid(CDataBlob<float>& inputData) {
+void sigmoid(CDataBlob<float>& inputData)
+{
     for(int r = 0; r < inputData.rows; ++r) {
         for(int c = 0; c < inputData.cols; ++c) {
             float* pIn = inputData.ptr(r, c);

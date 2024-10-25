@@ -84,12 +84,15 @@ int main(int argc, char* argv[])
 
 	pResults = facedetect_cnn(pBuffer, (unsigned char*)(image.ptr(0)), image.cols, image.rows, (int)image.step);
     
-    cvtm.stop();    
+    cvtm.stop();
+
     printf("time = %gms\n", cvtm.getTimeMilli());
     
     printf("%d faces detected.\n", (pResults ? *pResults : 0));
+
 	Mat result_image = image.clone();
-	//print the detection results
+	
+    // print the detection results
 	for(int i = 0; i < (pResults ? *pResults : 0); i++)
 	{
         short * p = ((short*)(pResults + 1)) + 16*i;
@@ -99,13 +102,17 @@ int main(int argc, char* argv[])
 		int w = p[3];
 		int h = p[4];
         
-        //show the score of the face. Its range is [0-100]
+        // show the score of the face. Its range is [0-100]
         char sScore[256];
+
         snprintf(sScore, 256, "%d", confidence);
+        
         cv::putText(result_image, sScore, cv::Point(x, y-3), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0), 1);
-        //draw face rectangle
+        
+        // draw face rectangle
 		rectangle(result_image, Rect(x, y, w, h), Scalar(0, 255, 0), 2);
-        //draw five face landmarks in different colors
+        
+        // draw five face landmarks in different colors
         cv::circle(result_image, cv::Point(p[5], p[5 + 1]), 1, cv::Scalar(255, 0, 0), 2);
         cv::circle(result_image, cv::Point(p[5 + 2], p[5 + 3]), 1, cv::Scalar(0, 0, 255), 2);
         cv::circle(result_image, cv::Point(p[5 + 4], p[5 + 5]), 1, cv::Scalar(0, 255, 0), 2);
@@ -118,11 +125,12 @@ int main(int argc, char* argv[])
                 p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13],p[14]);
 
 	}
+
 	imshow("result", result_image);
 
 	waitKey();
 
-    //release the buffer
+    // release the buffer
     free(pBuffer);
 
 	return 0;

@@ -5,20 +5,21 @@
 
 #include <iostream>
 
-// using namespace cv;
 using namespace std;
 
-static cv::Mat visualize(cv::Mat input, cv::Mat faces, bool print_flag=false, double fps=-1, int thickness=2)
+static cv::Mat visualize(cv::Mat input, cv::Mat faces, bool print_flag = false, double fps = -1, int thickness = 2)
 {
     cv::Mat output = input.clone();
 
-    if (fps > 0) {
+    if (fps > 0)
+    {
         cv::putText(output, cv::format("FPS: %.2f", fps), cv::Point2i(0, 15), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0));
     }
 
     for (int i = 0; i < faces.rows; i++)
     {
-        if (print_flag) {
+        if (print_flag)
+        {
             cout << "Face " << i
                  << ", top-left coordinates: (" << faces.at<float>(i, 0) << ", " << faces.at<float>(i, 1) << "), "
                  << "box width: " << faces.at<float>(i, 2)  << ", box height: " << faces.at<float>(i, 3) << ", "
@@ -26,16 +27,27 @@ static cv::Mat visualize(cv::Mat input, cv::Mat faces, bool print_flag=false, do
         }
 
         // Draw bounding box
-        cv::rectangle(output, cv::Rect2i(int(faces.at<float>(i, 0)), int(faces.at<float>(i, 1)), int(faces.at<float>(i, 2)), int(faces.at<float>(i, 3))), cv::Scalar(0, 255, 0), thickness);
+        cv::rectangle(output, cv::Rect2i(int(faces.at<float>(i, 0)), int(faces.at<float>(i, 1)),
+                                                int(faces.at<float>(i, 2)), int(faces.at<float>(i, 3))),
+                                                cv::Scalar(0, 255, 0), thickness);
         // Draw landmarks
-        cv::circle(output, cv::Point2i(int(faces.at<float>(i, 4)),  int(faces.at<float>(i, 5))),  2, cv::Scalar(255,   0,   0), thickness);
-        cv::circle(output, cv::Point2i(int(faces.at<float>(i, 6)),  int(faces.at<float>(i, 7))),  2, cv::Scalar(  0,   0, 255), thickness);
-        cv::circle(output, cv::Point2i(int(faces.at<float>(i, 8)),  int(faces.at<float>(i, 9))),  2, cv::Scalar(  0, 255,   0), thickness);
-        cv::circle(output, cv::Point2i(int(faces.at<float>(i, 10)), int(faces.at<float>(i, 11))), 2, cv::Scalar(255,   0, 255), thickness);
-        cv::circle(output, cv::Point2i(int(faces.at<float>(i, 12)), int(faces.at<float>(i, 13))), 2, cv::Scalar(  0, 255, 255), thickness);
+        cv::circle(output, cv::Point2i(int(faces.at<float>(i, 4)), int(faces.at<float>(i, 5))),
+                                                                            2, cv::Scalar(255,   0,   0), thickness);
+        cv::circle(output, cv::Point2i(int(faces.at<float>(i, 6)), int(faces.at<float>(i, 7))),
+                                                                            2, cv::Scalar(  0,   0, 255), thickness);
+        cv::circle(output, cv::Point2i(int(faces.at<float>(i, 8)), int(faces.at<float>(i, 9))),
+                                                                            2, cv::Scalar(  0, 255,   0), thickness);
+        cv::circle(output, cv::Point2i(int(faces.at<float>(i, 10)), int(faces.at<float>(i, 11))),
+                                                                            2, cv::Scalar(255,   0, 255), thickness);
+        cv::circle(output, cv::Point2i(int(faces.at<float>(i, 12)), int(faces.at<float>(i, 13))),
+                                                                            2, cv::Scalar(  0, 255, 255), thickness);
+        
         // Put score
-        cv::putText(output, cv::format("%.4f", faces.at<float>(i, 14)), cv::Point2i(int(faces.at<float>(i, 0)), int(faces.at<float>(i, 1))+15), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0));
+        cv::putText(output, cv::format("%.4f", faces.at<float>(i, 14)),
+                                cv::Point2i(int(faces.at<float>(i, 0)), int(faces.at<float>(i, 1))+15),
+                                cv::HersheyFonts::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0));
     }
+
     return output;
 }
 
@@ -53,9 +65,11 @@ int main(int argc, char ** argv)
         "{save  s           | false      | Set true to save results. This flag is invalid when using camera.}"
         "{vis   v           | true       | Set true to open a window for result visualization. This flag is invalid when using camera.}"
     );
+
     if (argc == 1 || parser.has("help"))
     {
         parser.printMessage();
+
         return -1;
     }
 
@@ -71,7 +85,7 @@ int main(int argc, char ** argv)
     bool vis = parser.get<bool>("vis");
 
     // Initialize FaceDetectorYN
-    cv::Ptr<cv::FaceDetectorYN> detector = cv::FaceDetectorYN::create(modelPath, "", cv::Size(320, 320), scoreThreshold, nmsThreshold, topK, backendId, targetId);
+    cv::Ptr<cv::FaceDetectorYN> tmpFaceDetectorYN = cv::FaceDetectorYN::create(modelPath, "", cv::Size(320, 320), scoreThreshold, nmsThreshold, topK, backendId, targetId);
 
     // If input is an image
     if (parser.has("input"))
@@ -79,9 +93,9 @@ int main(int argc, char ** argv)
         cv::String input = parser.get<cv::String>("input");
         cv::Mat image = cv::imread(input);
 
-        detector->setInputSize(image.size());
+        tmpFaceDetectorYN->setInputSize(image.size());
         cv::Mat faces;
-        detector->detect(image, faces);
+        tmpFaceDetectorYN->detect(image, faces);
 
         cv::Mat vis_image = visualize(image, faces, true);
         if(save)
@@ -89,6 +103,7 @@ int main(int argc, char ** argv)
             cout << "result.jpg saved.\n";
             cv::imwrite("result.jpg", vis_image);
         }
+
         if (vis)
         {
             cv::namedWindow(input, cv::WINDOW_AUTOSIZE);
@@ -96,14 +111,14 @@ int main(int argc, char ** argv)
             cv::waitKey(0);
         }
     }
-    else
+    else // If Input Is Not An Img, Will OpenCamera;
     {
         int deviceId = 0;
         cv::VideoCapture cap;
         cap.open(deviceId, cv::CAP_ANY);
         int frameWidth = int(cap.get(cv::CAP_PROP_FRAME_WIDTH));
         int frameHeight = int(cap.get(cv::CAP_PROP_FRAME_HEIGHT));
-        detector->setInputSize(cv::Size(frameWidth, frameHeight));
+        tmpFaceDetectorYN->setInputSize(cv::Size(frameWidth, frameHeight));
 
         cv::Mat frame;
         cv::TickMeter tm;
@@ -117,7 +132,7 @@ int main(int argc, char ** argv)
 
             cv::Mat faces;
             tm.start();
-            detector->detect(frame, faces);
+            tmpFaceDetectorYN->detect(frame, faces);
             tm.stop();
 
             cv::Mat vis_frame = visualize(frame, faces, false, tm.getFPS());

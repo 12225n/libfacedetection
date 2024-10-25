@@ -1,8 +1,8 @@
 # CMakeLists for libfacedetectcnn
 
-project(libfacedetection)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 2.8.12)
+project(libfacedetection)
 
 option(ENABLE_NEON "whether use neon, if use arm please set it on" OFF)
 option(ENABLE_AVX512 "use avx512" OFF)
@@ -116,11 +116,11 @@ ADD_LIBRARY(${fdt_lib_name} ${fdt_source_files} ${INSTALLHEADER_FILES})
 
 # Generate export header
 GENERATE_EXPORT_HEADER(${fdt_lib_name})
+
 string(TOLOWER ${fdt_lib_name} LOWER_PROJECT_NAME)
-set(INSTALLHEADER_FILES ${INSTALLHEADER_FILES} 
-    ${CMAKE_CURRENT_BINARY_DIR}/${LOWER_PROJECT_NAME}_export.h)
-file(COPY ${CMAKE_CURRENT_BINARY_DIR}/${LOWER_PROJECT_NAME}_export.h
-    DESTINATION ${CMAKE_BINARY_DIR})
+
+set(INSTALLHEADER_FILES ${INSTALLHEADER_FILES} ${CMAKE_CURRENT_BINARY_DIR}/${LOWER_PROJECT_NAME}_export.h)
+file(COPY ${CMAKE_CURRENT_BINARY_DIR}/${LOWER_PROJECT_NAME}_export.h DESTINATION ${CMAKE_BINARY_DIR})
 
 include_directories(${fdt_lib_name} ${CMAKE_BINARY_DIR})
 
@@ -138,13 +138,16 @@ INSTALL(TARGETS ${fdt_lib_name}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/facedetection
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     )
+
 export(TARGETS ${fdt_lib_name}
        APPEND FILE ${CMAKE_BINARY_DIR}/${fdt_lib_name}Config.cmake
 )
+
 # Install cmake configure files
 install(EXPORT ${fdt_lib_name}Config
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${fdt_lib_name}"
         )
+        
 write_basic_package_version_file(
     "${CMAKE_BINARY_DIR}/${fdt_lib_name}ConfigVersion.cmake"
     VERSION ${BUILD_VERSION}

@@ -38,15 +38,21 @@ the use of this software, even if advised of the possibility of such damage.
 
 #pragma once
 
-#include "facedetection_export.h"
+#ifdef LibFaceDetection_EXPORTS
+#define LibFaceDetection_Export __declspec( dllexport )
+#else
+#define LibFaceDetection_Export __declspec( dllimport )
+#endif
+
+// #include "facedetection_export.h"
 
 //#define _ENABLE_AVX512 //Please enable it if X64 CPU
 //#define _ENABLE_AVX2 //Please enable it if X64 CPU
 //#define _ENABLE_NEON //Please enable it if ARM CPU
 
 
-FACEDETECTION_EXPORT int * facedetect_cnn(unsigned char * result_buffer, //buffer memory for storing face detection results, !!its size must be 0x20000 Bytes!!
-                    unsigned char * rgb_image_data, int width, int height, int step); //input image, it must be BGR (three channels) insteed of RGB image!
+LibFaceDetection_Export int * facedetect_cnn(unsigned char * result_buffer, //buffer memory for storing face detection results, !!its size must be 0x20000 Bytes!!
+                    unsigned char * rgb_image_data, int width, int height, int step); //input image, it must be BGR (three channels) instead of RGB image!
 
 /*
 DO NOT EDIT the following code if you don't really understand it.
