@@ -10,6 +10,8 @@ option(ENABLE_AVX2 "use avx2" ON)
 option(DEMO "build the demo" OFF)
 option(USE_OPENMP "Use OpenMP" ON)
 
+# add_definitions(-DLibFaceDetection_EXPORTS)
+
 if (BUILD_SHARED_LIBS)
 	add_definitions(-DBUILD_SHARED_LIBS)
     if (CMAKE_COMPILER_IS_GNUCXX AND NOT MINGW)
@@ -113,6 +115,8 @@ include(GNUInstallDirs)
 
 # Create a library
 ADD_LIBRARY(${fdt_lib_name} ${fdt_source_files} ${INSTALLHEADER_FILES})
+
+target_compile_definitions(${fdt_lib_name} PRIVATE LibFaceDetection_EXPORTS)
 
 # Generate export header
 GENERATE_EXPORT_HEADER(${fdt_lib_name})
